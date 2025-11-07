@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trợ lý Toán học</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- SỬA LỖI: Đã sửa 'xintegrity' thành 'integrity' và thêm 'defer' -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" xintegrity="sha384-KiWOvVjnN8qwKMPSsJxsVRKGlQPoB8JOEXMHWCGcquG8rMbtNIsmoxkC+MflxRxA" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" xintegrity="sha384-hIoBPJpTUs74ddlX/dyPbe2PYsC7Gc/5N+J4BY+7RVCjSQGqcjSRTMGZlCrWJaLv" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6Xg/TrSiyAUBBYj8rO2czGexiQDCbLGSbTD+N8PAGWEiGjSVOZMr8/Dvx" crossorigin="anonymous"></script>
+
+    <style>
+        /* Tùy chỉnh font chữ cho toàn bộ trang */
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            background-color: #f7fafc; /* Màu nền xám nhạt */
+            height: 100%;
+        }
+
+        /* Tùy chỉnh CSS cho nội dung được render (để thoáng mắt hơn) */
+        #result-content p {
+            margin-bottom: 1.25rem; /* my-5, tăng khoảng cách giữa các đoạn văn */
+            line-height: 1.6;
+        }
+
+        #result-content ul,
+        #result-content ol {
+            margin-left: 1.5rem; /* Thụt lề cho danh sách */
+            margin-bottom: 1.25rem; /* my-5 */
+            list-style-position: outside;
+        }
+        
+        #result-content ul {
+            list-style-type: disc;
+        }
+        
+        #result-content ol {
+            list-style-type: decimal;
+        }
+
+        #result-content li {
+            margin-bottom: 0.5rem; /* Khoảng cách giữa các mục trong danh sách */
+        }
+
+        /* Định dạng các tiêu đề H1-H4 với icon */
+        #result-content h1,
+        #result-content h2,
+        #result-content h3,
+        #result-content h4 {
+            font-weight: 600;
+            margin-top: 1.5rem;  /* my-6 */
+            margin-bottom: 1rem; /* my-4 */
+            display: flex;
+            align-items: center;
+            line-height: 1.3;
+        }
+
+        /* Cỡ chữ và icon cho H1 (#) */
+        #result-content h1 {
+            font-size: 1.5rem; /* 24px */
+        }
+        #result-content h1 svg { width: 1.25rem; height: 1.25rem; margin-right: 0.5rem; }
+
+        /* Cỡ chữ và icon cho H2 (##) */
+        #result-content h2 {
+            font-size: 1.25rem; /* 20px */
+        }
+        #result-content h2 svg { width: 1.125rem; height: 1.125rem; margin-right: 0.5rem; }
+
+        /* Cỡ chữ và icon cho H3 (###) */
+        #result-content h3 {
+            font-size: 1.125rem; /* 18px */
+        }
+        #result-content h3 svg { width: 1rem; height: 1rem; margin-right: 0.5rem; }
+        
+        /* Cỡ chữ và icon cho H4 (####) */
+        #result-content h4 {
+            font-size: 1.125rem; /* 18px */
+        }
+        #result-content h4 svg { width: 1rem; height: 1rem; margin-right: 0.5rem; }
+
+        #result-content blockquote {
+            border-left: 4px solid #e2e8f0;
+            padding-left: 1rem;
+            color: #4a5568;
+            font-style: italic;
+            margin-bottom: 1.25rem; /* my-5 */
+        }
+
+        /* CSS cho Bảng (Table) */
+        #result-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.25rem; /* my-5 */
+            border: 1px solid #e2e8f0; /* gray-200 */
+            font-size: 0.9rem; /* Làm chữ nhỏ hơn 1 chút cho vừa bảng */
+        }
+
+        #result-content th,
+        #result-content td {
+            border: 1px solid #e2e8f0; /* gray-200 */
+            padding: 0.75rem 1rem; /* p-3 p-4 */
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        #result-content th {
+            background-color: #f7fafc; /* gray-50 */
+            font-weight: 600;
+        }
+
+        #result-content tr:nth-child(even) {
+            background-color: #fcfdff; /* Màu sọc vằn nhẹ */
+        }
+
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-3xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden p-6 md:p-8">
+        
+        <!-- Tiêu đề và Mô tả -->
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-blue-700">
+                Trợ lý Toán học 🧮
+            </h1>
+            <p class="text-gray-600 text-center mt-2">
+                Giải bài tập Đại số & Hình học (lớp 6-12), kèm theo mẹo và tổng kết công thức.
+            </p>
+        </div>
+
+        <!-- Khu vực Nhập câu hỏi (Đã gom nhóm) -->
+        <div id="question-section" class="mb-6">
+            <!-- Tiêu đề và icon cho phần câu hỏi -->
+            <h2 class="flex items-center text-xl font-semibold mb-4 text-gray-800">
+                <!-- Icon "Pencil" -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Nhập đề bài của bạn
+            </h2>
+
+            <!-- Ô nhập câu hỏi -->
+            <div>
+                <textarea
+                    id="prompt-input"
+                    class="w-full h-40 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-shadow"
+                ></textarea>
+            </div>
+
+            <!-- Nút tải ảnh lên -->
+            <div class="mt-4 flex items-center">
+                <input type="file" id="image-upload" accept="image/*" class="hidden">
+                <label for="image-upload" class="cursor-pointer bg-gray-100 text-gray-700 p-2 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+                    Tải ảnh đề bài (nếu có)
+                </label>
+                <span id="file-name" class="ml-3 text-sm text-gray-500">Chưa chọn tệp nào</span>
+            </div>
+
+            <!-- Nút Giải bài -->
+            <button
+                id="solve-button"
+                class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold mt-4 hover:bg-blue-700 transition-colors duration-200 shadow-md"
+            >
+                Giải bài
+            </button>
+        </div>
+        
+        <!-- Đường kẻ ngang phân tách -->
+        <hr class="my-6 border-gray-200">
+
+        <!-- Khu vực hiển thị Trạng thái/Kết quả -->
+        <div id="result-container">
+            <!-- Trạng thái Đang tải -->
+            <div id="loading-indicator" class="text-center text-gray-500 hidden">
+                <div class="flex justify-center items-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <span class="ml-3">Đang tính toán, vui lòng chờ...</span>
+                </div>
+            </div>
+
+            <!-- Thông báo Lỗi -->
+            <div id="error-message" class="text-center text-red-600 p-4 bg-red-50 rounded-lg hidden"></div>
+
+            <!-- Khu vực Kết quả -->
+            <div id="result" class="hidden">
+                <!-- 1. Câu trả lời -->
+                <h2 class="flex items-center text-xl font-semibold mb-4 text-gray-800">
+                    <!-- Icon "Book" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    Bài giải:
+                </h2>
+                <div id="result-content" class="prose max-w-none text-gray-700">
+                    <!-- Nội dung trả lời sẽ được chèn vào đây -->
+                </div>
+
+                <!-- 2. Nguồn tham khảo (nếu có) -->
+                <div id="sources-container" class="mt-6 hidden">
+                    <h3 class="flex items-center text-lg font-semibold mb-3 text-gray-800">
+                        <!-- Icon "Link" -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101" />
+                        </svg>
+                        Nguồn tham khảo:
+                    </h3>
+                    <ul id="sources-list" class="list-disc list-inside text-sm">
+                        <!-- Nguồn sẽ được chèn vào đây -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        const promptInput = document.getElementById("prompt-input");
+        const solveButton = document.getElementById("solve-button");
+        const loadingIndicator = document.getElementById("loading-indicator");
+        const errorMessage = document.getElementById("error-message");
+        const resultDiv = document.getElementById("result");
+        const resultContent = document.getElementById("result-content");
+        const sourcesContainer = document.getElementById("sources-container");
+        const sourcesList = document.getElementById("sources-list");
+        const imageUpload = document.getElementById("image-upload");
+        const fileNameSpan = document.getElementById("file-name");
+
+        let uploadedFileBase64 = null;
+        let uploadedFileMimeType = null;
+
+        imageUpload.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                fileNameSpan.textContent = "Chưa chọn tệp nào";
+                uploadedFileBase64 = null;
+                uploadedFileMimeType = null;
+                return;
+            }
+            
+            if (!file.type.startsWith("image/")) {
+                fileNameSpan.textContent = "Lỗi: Chỉ chấp nhận tệp ảnh.";
+                uploadedFileBase64 = null;
+                uploadedFileMimeType = null;
+                return;
+            }
+
+            fileNameSpan.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = (loadEvent) => {
+                const fullBase64 = loadEvent.target.result;
+                uploadedFileBase64 = fullBase64.split(",")[1];
+                uploadedFileMimeType = file.type;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        solveButton.addEventListener("click", async () => {
+            const userQuery = promptInput.value.trim();
+            
+            if (!userQuery && !uploadedFileBase64) {
+                showError("Vui lòng nhập đề bài hoặc tải lên ảnh.");
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const { text, sources } = await generateContentWithGemini(userQuery, uploadedFileBase64, uploadedFileMimeType);
+                
+                // 1. Định dạng văn bản
+                const formattedHtml = formatTextToHtml(text);
+                resultContent.innerHTML = formattedHtml;
+                
+                // 2. Render KaTeX (Toán học)
+                // Phải chạy sau khi DOM đã được cập nhật
+                setTimeout(() => {
+                    if (window.renderMathInElement) {
+                        window.renderMathInElement(resultContent, {
+                            delimiters: [
+                                {left: '$$', right: '$$', display: true},
+                                {left: '$', right: '$', display: false},
+                                {left: '\\(', right: '\\)', display: false},
+                                {left: '\\[', right: '\\]', display: true}
+                            ],
+                            throwOnError: false
+                        });
+                    }
+                }, 0);
+
+                // 3. Hiển thị nguồn
+                if (sources && sources.length > 0) {
+                    sourcesList.innerHTML = ""; 
+                    sources.forEach(source => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<a href="${source.uri}" target="_blank" class="text-blue-600 hover:underline">${source.title}</a>`;
+                        sourcesList.appendChild(li);
+                    });
+                    sourcesContainer.classList.remove("hidden");
+                } else {
+                    sourcesContainer.classList.add("hidden");
+                }
+
+                showLoading(false);
+
+            } catch (error) {
+                console.error(error);
+                showError("Đã xảy ra lỗi khi cố gắng giải bài. Vui lòng thử lại. " + error.message);
+                showLoading(false);
+            }
+        });
+
+        function showLoading(isLoading) {
+            loadingIndicator.classList.toggle("hidden", !isLoading);
+            errorMessage.classList.add("hidden");
+            resultDiv.classList.toggle("hidden", isLoading);
+            if (isLoading) {
+                resultContent.innerHTML = "";
+                sourcesContainer.classList.add("hidden");
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove("hidden");
+            resultDiv.classList.add("hidden");
+            loadingIndicator.classList.add("hidden");
+        }
+
+        // Hàm chuyển đổi Markdown/Text sang HTML
+        function formatTextToHtml(text) {
+            if (!text) return "";
+            
+            const iconH1 = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-blue-600"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25l-4.5 2.25V3.75m9 0H7.5A2.25 2.25 0 005.25 6v13.5A2.25 2.25 0 007.5 21h9a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0016.5 3.75z" /></svg>`; // Bookmark
+            const iconH2 = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-green-600"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" /></svg>`; // Book Open
+            const iconH3 = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-purple-600"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v.75m-6-5.25v.75m6-5.25v.75m0-5.25v.75m6 5.25v.75m-6-5.25v.75M12 3v.75m0 15v.75m0-15v.75m0 0a6 6 0 00-6 6v1.5m6-7.5a6 6 0 016 6v1.5m0-7.5V3" /></svg>`; // Microphone
+            // SỬA LỖI: Đã xóa dòng văn bản "Choose a more relevant icon..."
+            const iconH4 = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-orange-600"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>`; // Pen tool
+
+            text = text.replace(/<br\s*\/?>/gi, '\n');
+            const paragraphs = text.split('\n\n');
+            
+            return paragraphs.map(paragraph => {
+
+                // ---- Xử lý Bảng (Table) ----
+                const lines = paragraph.split('\n');
+                if (lines.length > 1 && lines[0].includes('|') && lines[1].includes('---')) {
+                    try {
+                        let html = '<table>';
+                        const headers = lines[0].split('|').map(h => h.trim()).filter(Boolean);
+                        html += '<thead><tr>';
+                        headers.forEach(header => {
+                            html += `<th>${header.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')}</th>`;
+                        });
+                        html += '</tr></thead>';
+                        html += '<tbody>';
+                        for (let i = 2; i < lines.length; i++) {
+                            const cells = lines[i].split('|').map(c => c.trim()).filter(Boolean);
+                            if (cells.length > 0) {
+                                html += '<tr>';
+                                cells.forEach(cell => {
+                                    let cellHtml = cell
+                                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                                    html += `<td>${cellHtml}</td>`;
+                                });
+                                html += '</tr>';
+                            }
+                        }
+                        html += '</tbody></table>';
+                        return html; 
+                    } catch (e) {
+                        // Bỏ qua nếu lỗi
+                    }
+                }
+                // ---- Hết xử lý Bảng ----
+
+                if (paragraph.startsWith('#### ')) {
+                    return `<h4>${iconH4} ${paragraph.substring(5)}</h4>`;
+                }
+                if (paragraph.startsWith('### ')) {
+                    return `<h3>${iconH3} ${paragraph.substring(4)}</h3>`;
+                }
+                if (paragraph.startsWith('## ')) {
+                    return `<h2>${iconH2} ${paragraph.substring(3)}</h2>`;
+                }
+                if (paragraph.startsWith('# ')) {
+                    return `<h1>${iconH1} ${paragraph.substring(2)}</h1>`;
+                }
+
+                if (paragraph.match(/^(\*|\-)\s/m)) {
+                    const items = paragraph.split('\n').map(item => {
+                        const content = item.replace(/^(\*|\-)\s/, '').trim()
+                                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                            .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                        return `<li>${content}</li>`;
+                    }).join('');
+                    return `<ul>${items}</ul>`;
+                }
+                
+                if (paragraph.match(/^\d+\.\s/m)) {
+                    const items = paragraph.split('\n').map(item => {
+                        const content = item.replace(/^\d+\.\s/, '').trim()
+                                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                            .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                        return `<li>${content}</li>`;
+                    }).join('');
+                    return `<ol>${items}</ol>`;
+                }
+
+                let html = paragraph
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')       
+                    .replace(/__(.*?)__/g, '<strong>$1</strong>') 
+                    .replace(/_(.*?)_/g, '<em>$1</em>');      
+
+                html = html.replace(/\n/g, '<br>');
+
+                return `<p>${html}</p>`;
+                
+            }).join('');
+        }
+
+        async function generateContentWithGemini(query, base64Data, mimeType) {
+            const apiKey = ""; // API key sẽ được chèn tự động
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            // System Prompt cho Trợ lý Toán học
+            const systemPrompt = `Bạn là một trợ lý AI chuyên gia về Toán học (Đại số và Hình học), được thiết kế để giúp học sinh từ lớp 6 đến lớp 12.
+Nhiệm vụ của bạn là:
+1.  **Giải bài tập:** Cung cấp lời giải chi tiết, từng bước một, rõ ràng và dễ hiểu. Sử dụng công thức toán học (dạng LaTeX, ví dụ $x^2 + y^2 = z^2$) để KaTeX có thể hiển thị.
+2.  **BẮT BUỘC (QUAN TRỌNG NHẤT):** Sau mỗi bài giải, bạn PHẢI có một phần "### Tổng kết và Kiến thức trọng tâm" bao gồm chính xác các mục sau:
+    * **Công thức đã sử dụng:** Liệt kê các công thức, định lý chính đã dùng.
+    * **Mẹo giải toán:** Chỉ ra các mẹo, dấu hiệu nhận biết dạng bài, hoặc cách giải nhanh.
+    * **Những lỗi thường gặp và cách tránh:** Nêu rõ các lỗi sai phổ biến mà học sinh hay mắc phải khi giải dạng bài này và cách để tránh chúng.
+3.  **Phong cách:** Sử dụng ngôn ngữ học thuật, chính xác, nhưng phải dễ hiểu. Trình bày câu trả lời một cách chuyên nghiệp, có cấu trúc (sử dụng tiêu đề, danh sách).
+4.  **Không trả lời:** Từ chối trả lời các câu hỏi không liên quan đến Toán học hoặc giáo dục.`;
+
+            const parts = [];
+            if (query) {
+                parts.push({ text: query });
+            }
+            if (base64Data && mimeType) {
+                parts.push({
+                    inlineData: {
+                        mimeType: mimeType,
+                        data: base64Data
+                    }
+                });
+                if (!query) {
+                    parts.push({ text: "Hãy giải bài toán trong hình ảnh này." });
+                }
+            }
+            
+            const payload = {
+                contents: [{ parts: parts }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            // Hàm retry với exponential backoff
+            const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        if ((response.status >= 500 || response.status === 429) && retries > 0) {
+                            await new Promise(res => setTimeout(res, delay));
+                            return fetchWithRetry(url, options, retries - 1, delay * 2);
+                        }
+                        throw new Error(`Lỗi API: ${response.status} ${response.statusText}`);
+                    }
+                    return response.json();
+                } catch (error) {
+                    if (retries > 0) {
+                        await new Promise(res => setTimeout(res, delay));
+                        return fetchWithRetry(url, options, retries - 1, delay * 2);
+                    }
+                    throw error;
+                }
+            };
+
+            const result = await fetchWithRetry(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const candidate = result.candidates?.[0];
+
+            if (!candidate || !candidate.content?.parts?.[0]?.text) {
+                throw new Error("Không nhận được nội dung hợp lệ từ AI.");
+            }
+
+            const text = candidate.content.parts[0].text;
+
+            let sources = [];
+            const groundingMetadata = candidate.groundingMetadata;
+            if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                sources = groundingMetadata.groundingAttributions
+                    .map(attribution => ({
+                        uri: attribution.web?.uri,
+                        title: attribution.web?.title,
+                    }))
+                    .filter(source => source.uri && source.title); 
+            }
+
+            return { text, sources };
+        }
+
+    </script>
+</body>
+</html>
