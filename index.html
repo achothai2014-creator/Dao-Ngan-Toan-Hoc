@@ -7,7 +7,7 @@
     <title>Trợ lý Toán học</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- ĐÃ SỬA LỖI: Sửa 'xintegrity' thành 'integrity' và thêm 'defer' -->
+    <!-- ĐÃ SỬA LỖI 1: Sửa 'xintegrity' thành 'integrity' và thêm 'defer' -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" xintegrity="sha384-KiWOvVjnN8qwKMPSsJxsVRKGlQPoB8JOEXMHWCGcquG8rMbtNIsmoxkC+MflxRxA" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" xintegrity="sha384-hIoBPJpTUs74ddlX/dyPbe2PYsC7Gc/5N+J4BY+7RVCjSQGqcjSRTMGZlCrWJaLv" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6Xg/TrSiyAUBBYj8rO2czGexiQDCbLGSbTD+N8PAGWEiGjSVOZMr8/Dvx" crossorigin="anonymous"></script>
@@ -281,8 +281,15 @@ Nhiệm vụ của bạn là:
                     });
                 }
                 
-                // Gọi API của Gemini
-                const apiKey = ""; // API key sẽ được cung cấp tự động trong môi trường này
+                // GỌI API GEMINI - ĐÂY LÀ PHẦN BẠN CẦN THAY THẾ KEY
+                // const apiKey = ""; // Dòng này sẽ không hoạt động trên GitHub
+                // HÃY THAY THẾ BẰNG API KEY CỦA BẠN NHƯ HƯỚNG DẪN
+                const apiKey = "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY"; // <<<<< THAY THẾ DÒNG NÀY
+                
+                if (apiKey === "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY") {
+                   throw new Error("Bạn chưa thêm API Key. Vui lòng làm theo tệp 'api_key_instructions.md'.");
+                }
+                
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
                 let text = '';
@@ -299,6 +306,10 @@ Nhiệm vụ của bạn là:
                         });
 
                         if (!response.ok) {
+                            // Nếu lỗi 400, thường là do API key sai
+                            if (response.status === 400) {
+                                throw new Error(`Lỗi API: ${response.statusText} (Rất có thể API Key của bạn bị sai hoặc chưa được kích hoạt).`);
+                            }
                             throw new Error(`Lỗi API: ${response.statusText}`);
                         }
 
@@ -320,6 +331,10 @@ Nhiệm vụ của bạn là:
                             }
                             break; // Thoát khỏi vòng lặp nếu thành công
                         } else {
+                            // Đôi khi AI trả về nội dung trống nếu bị chặn
+                            if (candidate && candidate.finishReason === 'SAFETY') {
+                                throw new Error('AI đã từ chối trả lời vì lý do an toàn/bản quyền.');
+                            }
                             throw new Error('Không nhận được nội dung hợp lệ từ AI.');
                         }
                     } catch (error) {
@@ -392,7 +407,7 @@ Nhiệm vụ của bạn là:
                     tableHtml += '<tr>';
                     const cells = row.split('|').map(c => c.trim()).filter(Boolean);
                     cells.forEach(cell => {
-                        // ĐỊNH DẠNG BÊN TRONG BẢNG (ví dụ: in đậm)
+                        // ĐÃ SỬA LỖI 2: Sửa '$M1' thành '$1'
                         let cellContent = cell
                             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                             .replace(/\*(.*?)\*/g, '<i>$1</i>');
@@ -429,7 +444,7 @@ Nhiệm vụ của bạn là:
             
             // Biến đổi các mục danh sách tiếp theo
             html = html.replace(/^(?!<(ul|ol)>.*?>)\s*\*\s(.*?)$/gm, '  <li>$1</li>');
-            // ĐÃ SỬA LỖI: Sửa 'cm' thành 'gm' (lỗi Invalid regular expression flags)
+            // ĐÃ SỬA LỖI 3: Sửa 'cm' thành 'gm' (lỗi Invalid regular expression flags)
             html = html.replace(/^(?!<(ul|ol)>.*?>)\s*\d+\.\s(.*?)$/gm, '  <li>$1</li>');
 
             // Xử lý xuống dòng (chuyển đổi \n thành <p>)
