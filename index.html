@@ -1,470 +1,503 @@
 <!DOCTYPE html>
-<html lang="vi" class="h-full">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trợ lý Toán học</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX CSS (Sửa lỗi: 'integrity' thay vì 'xintegrity') -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" 
+          xintegrity="sha384-KiWOvVjnN8qwZuNkfzOEE5jscrJ52i4MGpnIfNLMnL0iXgHIXdN4pk1H0OmdtLoV" 
+          crossorigin="anonymous">
     
-    <!-- ĐÃ SỬA LỖI 1: Sửa 'xintegrity' thành 'integrity' và thêm 'defer' -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" xintegrity="sha384-KiWOvVjnN8qwKMPSsJxsVRKGlQPoB8JOEXMHWCGcquG8rMbtNIsmoxkC+MflxRxA" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" xintegrity="sha384-hIoBPJpTUs74ddlX/dyPbe2PYsC7Gc/5N+J4BY+7RVCjSQGqcjSRTMGZlCrWJaLv" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6Xg/TrSiyAUBBYj8rO2czGexiQDCbLGSbTD+N8PAGWEiGjSVOZMr8/Dvx" crossorigin="anonymous"></script>
-
+    <!-- KaTeX JS (Sửa lỗi: 'integrity' và thêm 'defer') -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" 
+            xintegrity="sha384-hIoBPJpTadxVFVvJscMuNmrjJ2LbxD5PSoROSxETlRkLhSROkfB9I/2+QigM2bgo" 
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" 
+            xintegrity="sha384-gE/VvHhSSSMyLBCKTUvMcV0pMhLG+A1xLhYQDN7x/zIinaY/KqMvATq1TqgJ2+no" 
+            crossorigin="anonymous"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Tùy chỉnh font chữ */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Nền xám nhạt */
         }
-        
-        /* Cải thiện CSS cho các thành phần */
-        #result-container h1, #result-container h2, #result-container h3, #result-container h4 {
+
+        /* Tăng cường định dạng cho nội dung trả về */
+        .response-content h1,
+        .response-content h2,
+        .response-content h3,
+        .response-content h4 {
             font-weight: 600;
-            margin-top: 1.25rem; /* Tăng khoảng cách thoáng */
-            margin-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
 
-        #result-container h1 { font-size: 1.5rem; }
-        #result-container h2 { font-size: 1.25rem; }
-        #result-container h3 { font-size: 1.125rem; }
-        #result-container h4 { font-size: 1rem; }
-
-        #result-container p {
-            line-height: 1.65;
-            margin-bottom: 1rem; /* Tăng khoảng cách đoạn */
+        .response-content h1 {
+            font-size: 1.875rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
         }
 
-        #result-container ul, #result-container ol {
-            list-style-position: inside;
-            padding-left: 1rem;
+        .response-content h2 {
+            font-size: 1.5rem;
+        }
+
+        .response-content h3 {
+            font-size: 1.25rem;
+        }
+
+        .response-content h4 {
+            font-size: 1.125rem;
+        }
+
+        .response-content p {
             margin-bottom: 1rem;
+            line-height: 1.6;
         }
-        #result-container ul { list-style-type: disc; }
-        #result-container ol { list-style-type: decimal; }
+
+        .response-content ul,
+        .response-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            list-style-position: outside;
+        }
+
+        .response-content ul {
+            list-style-type: disc;
+        }
+
+        .response-content ol {
+            list-style-type: decimal;
+        }
         
-        #result-container li {
+        .response-content li {
             margin-bottom: 0.5rem;
         }
 
-        #result-container a {
-            color: #2563eb;
-            text-decoration: underline;
+        .response-content strong {
+            font-weight: 600;
         }
 
-        /* Định dạng Bảng (Table) chuyên nghiệp */
-        #result-container table {
+        .response-content em {
+            font-style: italic;
+        }
+
+        /* Định dạng bảng (table) */
+        .response-content table {
             width: 100%;
+            margin-bottom: 1rem;
             border-collapse: collapse;
-            margin-top: 1rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden; /* Để bo góc */
+            border: 1px solid #ddd;
         }
 
-        #result-container th, #result-container td {
-            border: 1px solid #e5e7eb;
-            padding: 0.75rem 1rem;
+        .response-content th,
+        .response-content td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
             text-align: left;
-            line-height: 1.5;
         }
 
-        #result-container th {
+        .response-content th {
             background-color: #f9fafb;
             font-weight: 600;
-            color: #374151;
         }
 
-        #result-container td {
-            background-color: #ffffff;
+        .response-content tr:nth-child(even) {
+            background-color: #f9fafb;
         }
-        
-        /* CSS cho thư viện KaTeX */
+
+        /* Đảm bảo KaTeX hiển thị đúng */
         .katex-display {
+            display: block;
+            margin: 1em 0;
+            text-align: center;
             overflow-x: auto;
             overflow-y: hidden;
-            padding-bottom: 0.5rem;
         }
     </style>
 </head>
 
-<body class="h-full flex items-center justify-center p-4 md:p-8">
-    <div class="w-full max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl p-6 md:p-10">
+<!-- Sửa lỗi giao diện: Xóa 'h-full' và 'items-center' để nội dung neo lên trên và cho phép cuộn -->
+<body class="bg-gray-50 min-h-screen font-inter">
+
+    <div class="w-full max-w-3xl mx-auto p-4 md:p-8">
         
         <!-- Tiêu đề chính -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 flex items-center justify-center">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 flex items-center justify-center gap-3">
                 Trợ lý Toán học
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 ml-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h3m-3-10h.008v.008H12V7zM3 9v6a3 3 0 003 3h12a3 3 0 003-3V9m-18 0l-1-1v-1a3 3 0 013-3h12a3 3 0 013 3v1l-1 1M3 9h18" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="#FB923C" d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M9 7h2v2H9zM7 11h2v2H7zM5 15h2v2H5zM5 11h2v2H5zM5 7h2v2H5zm6 8H9v-2h2zm0-4H9v-2h2zm0-4H9V7h2zm6 8h-2v-2h2zm0-4h-2v-2h2zm0-4h-2V7h2zm-4 8h-2v-2h2zm0-4h-2v-2h2zM5 19v-2h2v2zM9 19v-2h2v2zM13 19v-2h2v2zm4 0v-2h2v2z"/></svg>
             </h1>
-            <p class="text-gray-500 mt-2">Giải bài tập Đại số & Hình học (lớp 6-12), kèm theo mẹo và tổng kết công thức.</p>
-        </div>
+            <p class="text-gray-600 mt-2">Giải bài tập Đại số & Hình học (lớp 6-12), kèm theo mẹo và tổng kết công thức.</p>
+        </header>
 
-        <!-- Đường kẻ phân cách -->
-        <hr class="my-6 border-gray-200">
-
-        <!-- Khu vực nhập câu hỏi -->
-        <div>
-            <h2 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
+        <!-- Khu vực nhập liệu -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m19.1 4.9c-1.2-1.2-3.1-1.2-4.2 0L13.8 6c.6.6.9 1.3.9 2.2c0 .4-.1.7-.2 1.1l2.8 2.8c.4-.1.7-.2 1.1-.2c.9 0 1.6.3 2.2.9l1.1-1.1c1.2-1.2 1.2-3.1 0-4.2M5.1 19.3l-1.4 1.4c-1.2 1.2-1.2 3.1 0 4.2c1.2 1.2 3.1 1.2 4.2 0L9 23.8c-.6-.6-.9-1.3-.9-2.2c0-.4.1-.7.2-1.1L5.5 17.7c-.4.1-.7.2-1.1.2c-.9 0-1.6-.3-2.2-.9m11.1-2.9l-2.8-2.8c.4-.1.7-.2 1.1-.2c.9 0 1.6.3 2.2.9l1.1-1.1c1.2-1.2 1.2-3.1 0-4.2s-3.1-1.2-4.2 0L13.2 9c-.6.6-.9 1.3-.9 2.2c0 .4.1.7.2 1.1l-2.8 2.8c-.4-.1-.7-.2-1.1-.2c-.9 0-1.6.3-2.2.9L5.3 18c-1.2-1.2-3.1-1.2-4.2 0s-1.2 3.1 0 4.2l1.1 1.1c.6.6 1.3.9 2.2.9c.4 0 .7-.1 1.1-.2l2.8-2.8c.1.4.2.7.2 1.1c0 .9.3 1.6.9 2.2l1.1 1.1c1.2 1.2 3.1 1.2 4.2 0s1.2-3.1 0-4.2l-1.1-1.1c-.6-.6-1.3-.9-2.2-.9c-.4 0-.7.1-1.1.2l2.8-2.8c.1.4.2.7.2 1.1c0 .9.3 1.6.9 2.2l1.1 1.1c1.2 1.2 3.1 1.2 4.2 0c1.2-1.2 1.2-3.1 0-4.2z"/></svg>
                 Nhập đề bài của bạn
             </h2>
-
-            <!-- Ô nhập văn bản -->
             <textarea id="prompt-input"
-                class="w-full h-40 p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow resize-y"
-            ></textarea>
+                class="w-full h-32 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Ví dụ: Giải phương trình bậc 2: x^2 - 3x + 2 = 0"></textarea>
 
-            <!-- Nút tải ảnh -->
-            <div class="mt-4 flex items-center">
-                <label for="image-upload" class="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg inline-flex items-center transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    Tải ảnh đề bài (nếu có)
+            <!-- Tải ảnh lên -->
+            <div class="mt-4 flex items-center gap-3">
+                <label
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md cursor-pointer text-sm">
+                    <span>Tải ảnh đề bài (nếu có)</span>
+                    <input type="file" id="image-upload" accept="image/*" class="hidden">
                 </label>
-                <input type="file" id="image-upload" accept="image/*" class="hidden">
-                <span id="file-name" class="ml-4 text-gray-500 text-sm italic"></span>
+                <span id="file-name" class="text-sm text-gray-500"></span>
             </div>
 
             <!-- Nút Giải bài -->
             <button id="solve-button"
-                class="w-full mt-5 bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200">
                 Giải bài
             </button>
         </div>
 
-        <!-- Khu vực bài giải -->
-        <div id="result-section" class="mt-8 pt-6 border-t border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.747 0-3.332.477-4.5 1.253" />
-                </svg>
+        <!-- Đường kẻ phân cách -->
+        <hr class="my-8 border-gray-200">
+
+        <!-- Khu vực hiển thị kết quả -->
+        <div id="result-container" class="bg-white p-6 rounded-lg shadow-md min-h-[10rem]">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2M9 17H7v-2h2zm4 0h-2v-2h2zm4 0h-2v-2h2zM9 13H7V7h2zm4 0h-2V7h2zm4 0h-2V7h2z"/></svg>
                 Bài giải:
             </h2>
-            <div id="loading-spinner" class="hidden text-center py-10">
-                <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                    role="status">
-                    <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Đang tải...</span>
-                </div>
-                <p class="mt-4 text-gray-500">AI đang suy nghĩ, vui lòng chờ...</p>
-            </div>
-            <div id="result-container" class="prose max-w-none">
-                <!-- Câu trả lời sẽ xuất hiện ở đây -->
-            </div>
-        </div>
 
-        <!-- Khu vực Nguồn tham khảo (nếu có) -->
-        <div id="sources-section" class="mt-6 pt-4 border-t border-gray-200 hidden">
-             <h3 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101" />
+            <!-- Hiển thị Loading -->
+            <div id="loading-indicator" class="text-center text-gray-500 hidden">
+                <svg class="animate-spin h-6 w-6 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
                 </svg>
-                Nguồn tham khảo:
-            </h3>
-            <ul id="sources-list" class="list-disc pl-6 text-sm">
-                <!-- Nguồn sẽ xuất hiện ở đây -->
-            </ul>
-        </div>
+                <p class="mt-2">AI đang suy nghĩ...</p>
+            </div>
 
+            <!-- Hiển thị Lỗi -->
+            <div id="error-message" class="text-red-600 hidden"></div>
+            
+            <!-- Hiển thị Kết quả -->
+            <div id="result-text" class="response-content"></div>
+
+            <!-- Hiển thị Nguồn tham khảo -->
+            <div id="sources-container" class="mt-6 hidden">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m13.09 20.29l-1.42 1.42L5.5 15.54V5.5h10.04l-3.47 3.47l1.42 1.42l3.47-3.47V15.5c0 1.25-.48 2.42-1.34 3.3l-2.5 2.49m5.56-8.94L17.24 10l1.42-1.42l-1.42-1.42l1.42-1.42l-1.42-1.42l1.42-1.42L17.24 1.5l-1.42 1.42l-1.41-1.42l-1.42 1.42L11.58 1.5l-1.41 1.42L8.76 1.5L7.34 2.92L5.92 1.5L4.5 2.92L3.09 1.5L1.67 2.92L3.09 4.34L1.67 5.76l1.42 1.42l-1.42 1.41l1.42 1.42l-1.42 1.41l1.42 1.42l1.41-1.42l1.42 1.42l1.41-1.42l1.42 1.42l2.83-2.83l1.41 1.42z"/></svg>
+                    Nguồn tham khảo:
+                </h3>
+                <ul id="sources-list" class="list-disc list-inside text-sm text-blue-600 space-y-1">
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <script type="module">
-        // Khởi tạo các biến
-        const promptInput = document.getElementById('prompt-input');
-        const solveButton = document.getElementById('solve-button');
-        const loadingSpinner = document.getElementById('loading-spinner');
-        const resultContainer = document.getElementById('result-container');
-        const imageUpload = document.getElementById('image-upload');
-        const fileNameSpan = document.getElementById('file-name');
+    <script type"module">
+        const promptInput = document.getElementById("prompt-input");
+        const imageUpload = document.getElementById("image-upload");
+        const fileNameSpan = document.getElementById("file-name");
+        const solveButton = document.getElementById("solve-button");
+        const loadingIndicator = document.getElementById("loading-indicator");
+        const errorMessage = document.getElementById("error-message");
+        const resultText = document.getElementById("result-text");
+        const sourcesContainer = document.getElementById("sources-container");
+        const sourcesList = document.getElementById("sources-list");
+
+        // Đã chèn API Key của bạn
+        const apiKey = "AIzaSyCSmpkUhm4TrsdrrIVVbJW7iH4jW9Sc6LI";
         
-        const sourcesSection = document.getElementById('sources-section');
-        const sourcesList = document.getElementById('sources-list');
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-        let imageBase64 = null;
-        let imageMimeType = null;
+        let base64Image = null;
 
-        // Xử lý tải ảnh lên
-        imageUpload.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (!file) {
-                imageBase64 = null;
-                imageMimeType = null;
-                fileNameSpan.textContent = '';
-                return;
+        // Xử lý khi người dùng chọn tệp ảnh
+        imageUpload.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                fileNameSpan.textContent = file.name;
+                // Chuyển ảnh sang base64
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    // Chỉ lấy phần base64, bỏ phần tiền tố data:image/...
+                    base64Image = reader.result.split(',')[1];
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileNameSpan.textContent = "";
+                base64Image = null;
             }
+        });
 
-            // Giới hạn loại tệp
-            if (!file.type.startsWith('image/')) {
-                alert('Chỉ hỗ trợ tệp hình ảnh (PNG, JPG, v.v.)');
+        // Xử lý khi nhấn nút "Giải bài"
+        solveButton.addEventListener("click", async () => {
+            const userPrompt = promptInput.value;
+
+            if (!userPrompt && !base64Image) {
+                showError("Vui lòng nhập câu hỏi hoặc tải ảnh lên.");
                 return;
             }
             
-            fileNameSpan.textContent = file.name;
-
-            // Chuyển ảnh sang Base64
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const base64String = reader.result.split(',')[1]; // Chỉ lấy phần base64
-                imageBase64 = base64String;
-                imageMimeType = file.type;
-            };
-            reader.onerror = (error) => {
-                console.error('Lỗi đọc tệp:', error);
-                fileNameSpan.textContent = 'Lỗi tải ảnh.';
-            };
-        });
-
-        // Xử lý nhấn nút Giải bài
-        solveButton.addEventListener('click', async () => {
-            const userQuery = promptInput.value.trim();
-
-            if (!userQuery && !imageBase64) {
-                resultContainer.textContent = 'Vui lòng nhập câu hỏi hoặc tải ảnh lên.';
+            if (apiKey === "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY") {
+                showError("Lỗi API: Bạn chưa thêm API Key. Vui lòng xem hướng dẫn trong tệp 'api_key_instructions.md' hoặc trong mã nguồn.");
                 return;
             }
 
-            // Hiển thị loading và vô hiệu hóa nút
-            loadingSpinner.classList.remove('hidden');
-            resultContainer.innerHTML = '';
-            sourcesSection.classList.add('hidden');
-            sourcesList.innerHTML = '';
-            solveButton.disabled = true;
+            clearResult();
+            setLoading(true);
 
             try {
-                // Chỉ dẫn hệ thống (System Prompt)
-                const systemPrompt = `Bạn là một trợ lý Toán học chuyên nghiệp, đặc biệt giỏi giải toán Đại số và Hình học cho học sinh Việt Nam từ lớp 6 đến lớp 12.
-Nhiệm vụ của bạn là:
-1.  Nhận đề bài (dưới dạng văn bản hoặc hình ảnh) và cung cấp lời giải CHI TIẾT, TỪNG BƯỚC một.
-2.  Sau khi giải xong, bạn **BẮT BUỘC** phải cung cấp một phần tổng kết ở cuối bài, có cấu trúc rõ ràng với các tiêu đề Markdown (ví dụ: '### Tổng kết'):
-    * **Công thức đã sử dụng:** Liệt kê các công thức toán học chính đã dùng trong bài giải.
-    * **Mẹo giải toán:** Chỉ ra các phương pháp, mẹo, hoặc kỹ thuật đặc biệt để giải nhanh hoặc dễ hiểu hơn.
-    * **Lỗi thường gặp & Cách tránh:** Nêu rõ những lỗi sai phổ biến mà học sinh hay mắc phải khi làm dạng bài này và cách để tránh chúng.
-3.  Sử dụng cú pháp KaTeX (ví dụ: $$\\frac{a}{b}$$ hoặc $$\\Delta = b^2 - 4ac$$) cho tất cả các công thức toán học.
-4.  Sử dụng Google Search (nếu cần) để tìm kiếm thông tin, công thức, hoặc các dạng bài toán tương tự để đưa ra câu trả lời chính xác nhất.
-5.  Trình bày câu trả lời một cách chuyên nghiệp, rõ ràng, thoáng đãng, sử dụng Markdown (tiêu đề, danh sách) để phân cấp nội dung.`;
+                // Chỉ dẫn hệ thống cho AI
+                const systemPrompt = `
+Bạn là một trợ lý Toán học chuyên nghiệp, có kiến thức sâu rộng về Đại số và Hình học từ lớp 6 đến lớp 12.
+Nhiệm vụ của bạn là giải các bài toán một cách chi tiết, từng bước một, dễ hiểu.
 
-                // Xây dựng payload
+QUAN TRỌNG: Sau khi giải xong bài toán, bạn BẮT BUỘC phải thêm một phần tổng kết có cấu trúc như sau:
+
+---
+
+### 📝 Tổng kết quan trọng
+
+**1. Công thức đã sử dụng:**
+* (Liệt kê các công thức toán học chính đã dùng để giải bài)
+
+**2. Mẹo giải toán:**
+* (Chia sẻ các mẹo, chiến lược, hoặc cách suy nghĩ để giải quyết dạng toán này nhanh hơn hoặc hiệu quả hơn)
+
+**3. Lỗi thường gặp và cách tránh:**
+* (Chỉ ra những sai lầm phổ biến mà học sinh hay mắc phải khi làm dạng bài này và cách để tránh chúng)
+
+Hãy sử dụng định dạng Markdown (đặc biệt là cú pháp LaTeX cho công thức toán, ví dụ: $$\\frac{a}{b}$$) để trình bày câu trả lời một cách rõ ràng và chuyên nghiệp.
+`;
+
+                // Xây dựng payload (nội dung gửi đi)
                 const payload = {
-                    contents: [{
-                        parts: [
-                            // { text: userQuery } // Chúng ta sẽ thêm phần này bên dưới
-                        ]
-                    }],
-                    tools: [{ "google_search": {} }],
+                    contents: [
+                        {
+                            role: "user",
+                            parts: []
+                        }
+                    ],
+                    // Thêm chỉ dẫn hệ thống
                     systemInstruction: {
-                        parts: [{ text: systemPrompt }]
+                        parts: [ { text: systemPrompt } ]
                     },
+                    // Kích hoạt Google Search để tìm thông tin (nếu cần)
+                    tools: [ { "google_search": {} } ]
                 };
-                
-                // Thêm văn bản nếu có
-                if (userQuery) {
-                    payload.contents[0].parts.push({ text: userQuery });
+
+                // Thêm câu hỏi văn bản (nếu có)
+                if (userPrompt) {
+                    payload.contents[0].parts.push({ text: userPrompt });
                 }
 
-                // Thêm ảnh nếu có
-                if (imageBase64 && imageMimeType) {
+                // Thêm ảnh (nếu có)
+                if (base64Image) {
                     payload.contents[0].parts.push({
                         inlineData: {
-                            mimeType: imageMimeType,
-                            data: imageBase64
+                            mimeType: "image/jpeg", // Giả định là jpeg, có thể là png
+                            data: base64Image
                         }
                     });
                 }
-                
-                // GỌI API GEMINI - ĐÂY LÀ PHẦN BẠN CẦN THAY THẾ KEY
-                // const apiKey = ""; // Dòng này sẽ không hoạt động trên GitHub
-                // HÃY THAY THẾ BẰNG API KEY CỦA BẠN NHƯ HƯỚNG DẪN
-                const apiKey = "AIzaSyCSmpkUhm4TrsdrrIVVbJW7iH4jW9Sc6LI"; // <<<<< THAY THẾ DÒNG NÀY
-                
-                if (apiKey === "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY") {
-                   throw new Error("Bạn chưa thêm API Key. Vui lòng làm theo tệp 'api_key_instructions.md'.");
-                }
-                
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-                let text = '';
-                let sources = [];
-                let retries = 3;
-                let delay = 1000;
-
-                for (let i = 0; i < retries; i++) {
-                    try {
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (!response.ok) {
-                            // Nếu lỗi 400, thường là do API key sai
-                            if (response.status === 400) {
-                                throw new Error(`Lỗi API: ${response.statusText} (Rất có thể API Key của bạn bị sai hoặc chưa được kích hoạt).`);
-                            }
-                            throw new Error(`Lỗi API: ${response.statusText}`);
-                        }
-
-                        const result = await response.json();
-                        const candidate = result.candidates?.[0];
-
-                        if (candidate && candidate.content?.parts?.[0]?.text) {
-                            text = candidate.content.parts[0].text;
-                            
-                            // Xử lý nguồn tham khảo
-                            const groundingMetadata = candidate.groundingMetadata;
-                            if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                                sources = groundingMetadata.groundingAttributions
-                                    .map(attribution => ({
-                                        uri: attribution.web?.uri,
-                                        title: attribution.web?.title,
-                                    }))
-                                    .filter(source => source.uri && source.title);
-                            }
-                            break; // Thoát khỏi vòng lặp nếu thành công
-                        } else {
-                            // Đôi khi AI trả về nội dung trống nếu bị chặn
-                            if (candidate && candidate.finishReason === 'SAFETY') {
-                                throw new Error('AI đã từ chối trả lời vì lý do an toàn/bản quyền.');
-                            }
-                            throw new Error('Không nhận được nội dung hợp lệ từ AI.');
-                        }
-                    } catch (error) {
-                        console.error(`Lỗi lần thử ${i + 1}:`, error);
-                        if (i === retries - 1) {
-                            throw error; // Ném lỗi cuối cùng nếu hết số lần thử
-                        }
-                        await new Promise(res => setTimeout(res, delay));
-                        delay *= 2; // Tăng gấp đôi thời gian chờ
-                    }
-                }
-
-                // Định dạng và hiển thị kết quả
-                const formattedHtml = formatTextToHtml(text);
-                resultContainer.innerHTML = formattedHtml;
-                
-                // Render KaTeX
-                renderMathInElement(resultContainer, {
-                    delimiters: [
-                        { left: '$$', right: '$$', display: true },
-                        { left: '$', right: '$', display: false },
-                        { left: '\\(', right: '\\)', display: false },
-                        { left: '\\[', right: '\\]', display: true }
-                    ],
-                    throwOnError: false
+                // Gọi API
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
 
+                if (!response.ok) {
+                    throw new Error(`Lỗi API: ${response.status} ${response.statusText}`);
+                }
+
+                const result = await response.json();
+
+                // Xilogism (Bắt lỗi an toàn của Google)
+                if (!result.candidates || result.candidates.length === 0 || 
+                    !result.candidates[0].content || !result.candidates[0].content.parts) {
+                    
+                    if (result.promptFeedback && result.promptFeedback.blockReason) {
+                        showError(`Câu hỏi của bạn đã bị chặn vì lý do: ${result.promptFeedback.blockReason}. Vui lòng thử lại với nội dung khác.`);
+                    } else {
+                        showError("AI không thể xử lý câu hỏi này. Vui lòng thử lại.");
+                    }
+                    return;
+                }
+
+                // Hiển thị kết quả
+                const generatedText = result.candidates[0].content.parts[0].text;
+                showResult(generatedText);
+
                 // Hiển thị nguồn
-                if (sources.length > 0) {
-                    sources.forEach(source => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<a href="${source.uri}" target="_blank" rel="noopener noreferrer">${source.title}</a>`;
-                        sourcesList.appendChild(li);
-                    });
-                    sourcesSection.classList.remove('hidden');
+                const groundingMetadata = result.candidates[0].groundingMetadata;
+                if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                    showSources(groundingMetadata.groundingAttributions);
                 }
 
             } catch (error) {
-                console.error('Lỗi nghiêm trọng khi giải bài:', error);
-                resultContainer.innerHTML = `<p class="text-red-600 font-medium">Đã xảy ra lỗi. Vui lòng thử lại. Lỗi: ${error.message}</p>`;
+                console.error(error);
+                showError("Đã xảy ra lỗi. Vui lòng thử lại. Lỗi: " + error.message);
             } finally {
-                // Ẩn loading và kích hoạt lại nút
-                loadingSpinner.classList.add('hidden');
-                solveButton.disabled = false;
+                setLoading(false);
+                // Đặt lại ảnh sau mỗi lần gửi
+                base64Image = null; 
+                imageUpload.value = null; // Xóa tệp đã chọn khỏi input
+                fileNameSpan.textContent = "";
             }
         });
 
-        // Hàm định dạng văn bản (Markdown sang HTML)
-        function formatTextToHtml(text) {
-            // Sửa lỗi <br> và xử lý xuống dòng
-            let html = text
-                .replace(/<br\s*\/?>/gi, '\n') // Chuyển <br> thành xuống dòng
-                .replace(/\n{3,}/g, '\n\n'); // Giới hạn tối đa 2 lần xuống dòng
+        // ----- CÁC HÀM HỖ TRỢ -----
 
-            // Xử lý Bảng (Table)
-            const tableRegex = /^\|(.*?)\|\s*\n\|\s*:(?:---)+:?(?:.*?)\|\s*\n((?:\|.*?\n?)*)/gm;
-            html = html.replace(tableRegex, (match, headerRow, bodyRows) => {
-                let tableHtml = '<table><thead><tr>';
-                
-                // Tiêu đề
-                const headers = headerRow.split('|').map(h => h.trim()).filter(Boolean);
-                headers.forEach(header => {
-                    tableHtml += `<th>${header}</th>`;
-                });
-                tableHtml += '</tr></thead><tbody>';
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loadingIndicator.classList.remove("hidden");
+                solveButton.disabled = true;
+                solveButton.classList.add("opacity-50", "cursor-not-allowed");
+            } else {
+                loadingIndicator.classList.add("hidden");
+                solveButton.disabled = false;
+                solveButton.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+        }
 
-                // Nội dung
-                const rows = bodyRows.split('\n').filter(Boolean);
-                rows.forEach(row => {
-                    tableHtml += '<tr>';
-                    const cells = row.split('|').map(c => c.trim()).filter(Boolean);
-                    cells.forEach(cell => {
-                        // ĐÃ SỬA LỖI 2: Sửa '$M1' thành '$1'
-                        let cellContent = cell
-                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/\*(.*?)\*/g, '<i>$1</i>');
-                        tableHtml += `<td>${cellContent}</td>`;
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove("hidden");
+        }
+
+        function clearResult() {
+            errorMessage.classList.add("hidden");
+            resultText.innerHTML = "";
+            sourcesContainer.classList.add("hidden");
+            sourcesList.innerHTML = "";
+        }
+
+        function showResult(text) {
+            // Chuyển đổi Markdown sang HTML trước khi hiển thị
+            resultText.innerHTML = formatTextToHtml(text);
+            
+            // Yêu cầu KaTeX render các công thức toán trong kết quả
+            // Dùng try-catch để tránh lỗi nếu auto-render không tồn tại
+            try {
+                if (window.renderMathInElement) {
+                    renderMathInElement(resultText, {
+                        delimiters: [
+                            { left: '$$', right: '$$', display: true },
+                            { left: '$', right: '$', display: false },
+                            { left: '\\[', right: '\\]', display: true },
+                            { left: '\\(', right: '\\)', display: false }
+                        ],
+                        throwOnError: false
                     });
-                    tableHtml += '</tr>';
-                });
-
-                tableHtml += '</tbody></table>';
-                return tableHtml;
-            });
-            
-            // Xử lý Tiêu đề (Headings) với Icons
-            html = html
-                .replace(/^#### (.*$)/gim, '<h4><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline-block text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>$1</h4>')
-                .replace(/^### (.*$)/gim, '<h3><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline-block text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>$1</h3>')
-                .replace(/^## (.*$)/gim, '<h2><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 inline-block text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>$1</h2>')
-                .replace(/^# (.*$)/gim, '<h1><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 inline-block text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>$1</h1>');
-
-            // Xử lý In đậm và In nghiêng
-            html = html
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<i>$1</i>');
-
-            // Xử lý Danh sách (List) - đảm bảo chúng được bọc trong <ul> hoặc <ol>
-            // Biến đổi các dòng * thành <ul>
-            html = html.replace(/^(?<!<li.*?>)\s*\*\s(.*?)$/gm, '<ul>\n  <li>$1</li>\n</ul>');
-            // Biến đổi các dòng 1. 2. 3. thành <ol>
-            html = html.replace(/^(?<!<li.*?>)\s*\d+\.\s(.*?)$/gm, '<ol>\n  <li>$1</li>\n</ol>');
-            
-            // Gộp các danh sách liền kề
-            html = html.replace(/<\/ul>\n<ul>/g, '');
-            html = html.replace(/<\/ol>\n<ol>/g, '');
-            
-            // Biến đổi các mục danh sách tiếp theo
-            html = html.replace(/^(?!<(ul|ol)>.*?>)\s*\*\s(.*?)$/gm, '  <li>$1</li>');
-            // ĐÃ SỬA LỖI 3: Sửa 'cm' thành 'gm' (lỗi Invalid regular expression flags)
-            html = html.replace(/^(?!<(ul|ol)>.*?>)\s*\d+\.\s(.*?)$/gm, '  <li>$1</li>');
-
-            // Xử lý xuống dòng (chuyển đổi \n thành <p>)
-            html = html.split('\n\n').map(paragraph => {
-                // Chỉ bọc thẻ <p> nếu nó không phải là thẻ HTML đã được xử lý (như <table>, <ul>, <h1>...)
-                if (paragraph.trim().startsWith('<') && paragraph.trim().endsWith('>')) {
-                    return paragraph;
                 }
-                return paragraph.trim() ? `<p>${paragraph.replace(/\n/g, '<br>')}</p>` : '';
-            }).join('');
-            
-            // Dọn dẹp thẻ <p> rỗng bọc quanh các thẻ block
-            html = html.replace(/<p>\s*(<(h[1-4]|ul|ol|table))/g, '$1');
-            html = html.replace(/((h[1-4]|ul|ol|table)>)\s*<\/p>/g, '$1');
+            } catch (e) {
+                console.error("Lỗi khi render KaTeX:", e);
+                showError("Đã xảy ra lỗi khi hiển thị công thức toán. Vui lòng kiểm tra lại đường truyền.");
+            }
+        }
 
-            return html;
+        function showSources(sources) {
+            sourcesContainer.classList.remove("hidden");
+            sourcesList.innerHTML = ""; // Xóa nguồn cũ
+            
+            const validSources = sources
+                .map(attr => attr.web)
+                .filter(web => web && web.uri && web.title); // Lọc các nguồn hợp lệ
+
+            if (validSources.length > 0) {
+                validSources.forEach(source => {
+                    const li = document.createElement("li");
+                    const a = document.createElement("a");
+                    a.href = source.uri;
+                    a.textContent = source.title;
+                    a.target = "_blank"; // Mở trong tab mới
+                    a.rel = "noopener noreferrer";
+                    a.className = "hover:underline";
+                    li.appendChild(a);
+                    sourcesList.appendChild(li);
+                });
+            } else {
+                sourcesContainer.classList.add("hidden");
+            }
+        }
+        
+        // Hàm chuyển đổi Markdown cơ bản sang HTML (an toàn)
+        function formatTextToHtml(text) {
+            // 1. Chuyển đổi các thẻ <br> (nếu AI trả về) thành ký tự xuống dòng
+            text = text.replace(/<br\s*\/?>/g, '\n');
+
+            // 2. Chuyển đổi tiêu đề (H1-H4) và thêm icon
+            const iconBookmark = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#60A5FA" d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3l7 3V5c0-1.1-.9-2-2-2"/></svg>';
+            const iconDoubleAngle = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#60A5FA" d="m13 16.29l-3.3-3.29l-1.4 1.42l4.7 4.7l4.7-4.7l-1.4-1.42l-3.3 3.3m-4.6-6.6L7 11.1l-1.4-1.42l4.7-4.7l4.7 4.7l-1.4 1.42l-3.3-3.3"/></svg>';
+            const iconAngle = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#60A5FA" d="m10 16.29l-3.3-3.3l-1.4 1.41l4.7 4.7l4.7-4.7l-1.4-1.41l-3.3 3.3"/></svg>';
+            const iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#60A5FA" d="M21 7L9 19l-5.5-5.5l1.41-1.41L9 16.17L19.59 5.59z"/></svg>';
+            
+            text = text.replace(/^(####)\s*(.*)/gm, `<h4>${iconCheck}$2</h4>`);
+            text = text.replace(/^(###)\s*(.*)/gm, `<h3>${iconAngle}$2</h3>`);
+            text = text.replace(/^(##)\s*(.*)/gm, `<h2>${iconDoubleAngle}$2</h2>`);
+            text = text.replace(/^(#)\s*(.*)/gm, `<h1>${iconBookmark}$2</h1>`);
+
+            // 3. Xử lý Bảng (Table)
+            text = text.replace(/\|(.+)\|(.+)\|/g, '<table><thead><tr><th>$1</th><th>$2</th></tr></thead><tbody>')
+                       .replace(/\|:---:\|:---:\|/g, '') // Bỏ dòng phân cách
+                       .replace(/\|(.+)\|(.+)\|/g, '<tr><td>$1</td><td>$2</td></tr>')
+                       .replace(/(<\/tr>)(?!<\/tbody>)/g, '</tr></tbody>') // Đóng tbody không đúng
+                       .replace(/<\/tbody>$/g, '</tbody></table>'); // Đóng bảng
+
+            // 3b. Sửa lỗi in đậm ($M1) bên trong bảng
+            text = text.replace(/<td>(.*?)<\/td>/g, (match, tableCell) => {
+                // Sửa lỗi: $M1 -> $1
+                const formattedCell = tableCell.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                               .replace(/_(.*?)_/g, '<em>$1</em>');
+                return `<td>${formattedCell}</td>`;
+            });
+            text = text.replace(/<th>(.*?)<\/th>/g, (match, tableCell) => {
+                // Sửa lỗi: $M1 -> $1
+                const formattedCell = tableCell.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                               .replace(/_(.*?)_/g, '<em>$1</em>');
+                return `<th>${formattedCell}</th>`;
+            });
+
+            // 4. In đậm và In nghiêng (bên ngoài bảng)
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/_(.*?)_/g, '<em>$1</em>');
+            
+            // 5. Xử lý danh sách (List)
+            // Sửa lỗi cờ regex: 'cm' -> 'gm'
+            text = '\n' + text + '\n'; // Đảm bảo xử lý đúng ở đầu/cuối
+            text = text.replace(/(\n-\s)(.*)/g, '\n<ul><li>$2</li></ul>');
+            text = text.replace(/<\/ul>\n<ul>/g, ''); // Gộp các list liền kề
+            
+            text = text.replace(/(\n\d+\.\s)(.*)/g, '\n<ol><li>$2</li></ol>');
+            text = text.replace(/<\/ol>\n<ol>/g, ''); // Gộp các list liền kề
+            
+            // 6. Chuyển đổi các ký tự xuống dòng (new paragraphs)
+            text = text.replace(/\n\n/g, '<p></p>'); // Các đoạn trống
+            text = text.replace(/\n/g, '<br>'); // Các ngắt dòng đơn
+            text = text.replace(/<br><(h[1-4]|ul|ol|table)/g, '<$1'); // Xóa <br> thừa trước tiêu đề/list/bảng
+            text = text.replace(/<br><li>/g, '<li>'); // Xóa <br> thừa trước <li>
+            text = text.replace(/<br><tr>/g, '<tr>'); // Xóa <br> thừa trước <tr>
+            text = text.replace(/(<\/h[1-4]>|<\/ul>|<\/ol>|<\/table>)<br>/g, '$1'); // Xóa <br> thừa sau tiêu đề/list/bảng
+            
+            // 7. Dọn dẹp
+            text = text.replace(/^(<br>)+|(<br>)+$/g, ''); // Xóa <br> ở đầu/cuối
+
+            return text;
         }
 
     </script>
 </body>
-
 </html>
-
